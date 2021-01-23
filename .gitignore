@@ -1,0 +1,12 @@
+*.o
+*.Po
+htmlgend
+wviewd_pro
+Makefile
+wviewd_vpro/wviewd_vpro
+config.log
+config.status
+stamp-h1
+config.h
+wviewd_vpro/doc/binary_file_format-5.3.txt
+wviewd_vpro/doc/binary_file_format-5.4.txt

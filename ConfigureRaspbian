@@ -1,0 +1,2 @@
+./configure --prefix=/ --bindir=/usr/bin --exec-prefix=/usr --sysconfdir=/etc --localstatedir=/var/lib --libdir=/usr/lib
+touch Makefile.in
