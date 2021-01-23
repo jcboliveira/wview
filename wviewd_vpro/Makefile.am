@@ -1,9 +1,7 @@
-# Makefile - htmlgend
-
-# files to include in the distro but not build
+# Makefile - Vantage Pro station daemon
 
 #define the executable to be built
-bin_PROGRAMS       = htmlgend
+bin_PROGRAMS    = wviewd_vpro
 
 # define include directories
 INCLUDES = \
@@ -12,26 +10,26 @@ INCLUDES = \
 		-D_GNU_SOURCE \
 		-DWV_CONFIG_DIR=\"$(sysconfdir)/wview\" \
 		-DWV_RUN_DIR=\"$(localstatedir)/wview\" \
-		-DBUILD_HTMLGEND
+		-DBUILD_WVIEWD
 
 # define the sources
-htmlgend_SOURCES   = \
+wviewd_vpro_SOURCES     = \
 		$(top_srcdir)/common/sensor.c \
 		$(top_srcdir)/common/wvutils.c \
+		$(top_srcdir)/common/msglog.c \
 		$(top_srcdir)/common/wvconfig.c \
 		$(top_srcdir)/common/status.c \
-		$(top_srcdir)/common/lunarCycle.c \
-		$(top_srcdir)/common/sunTimes.c \
 		$(top_srcdir)/common/dbsqlite.c \
-		$(top_srcdir)/common/dbsqliteHistory.c \
 		$(top_srcdir)/common/dbsqliteHiLow.c \
-		$(top_srcdir)/common/dbsqliteNOAA.c \
 		$(top_srcdir)/common/windAverage.c \
 		$(top_srcdir)/common/msglog.c \
-		$(top_srcdir)/htmlgenerator/html.c \
-		$(top_srcdir)/htmlgenerator/htmlStates.c \
-		$(top_srcdir)/htmlgenerator/htmlMgr.c \
-		$(top_srcdir)/htmlgenerator/htmlGenerate.c \
+		$(top_srcdir)/wviewd_vpro/computedData.c \
+		$(top_srcdir)/wviewd_vpro/daemon.c \
+		$(top_srcdir)/wviewd_vpro/station.c \
+		$(top_srcdir)/wviewd_vpro/serial.c \
+		$(top_srcdir)/wviewd_vpro/stormRain.c \
+		$(top_srcdir)/wviewd_vpro/vproInterface.c \
+		$(top_srcdir)/wviewd_vpro/vproStates.c \
 		$(top_srcdir)/common/sensor.h \
 		$(top_srcdir)/common/datadefs.h \
 		$(top_srcdir)/common/dbsqlite.h \
@@ -42,19 +40,21 @@ htmlgend_SOURCES   = \
 		$(top_srcdir)/common/windAverage.h \
 		$(top_srcdir)/common/msglog.h \
 		$(top_srcdir)/common/beaufort.h \
-		$(top_srcdir)/htmlgenerator/htmlGenerate.h \
-		$(top_srcdir)/htmlgenerator/html.h \
-		$(top_srcdir)/htmlgenerator/htmlMgr.h \
-		$(top_srcdir)/htmlgenerator/noaaGenerate.h
-
+		$(top_srcdir)/wviewd_vpro/computedData.h \
+		$(top_srcdir)/wviewd_vpro/daemon.h \
+		$(top_srcdir)/wviewd_vpro/station.h \
+		$(top_srcdir)/wviewd_vpro/serial.h \
+		$(top_srcdir)/wviewd_vpro/stormRain.h \
+		$(top_srcdir)/wviewd_vpro/vproInterface.h \
+		$(top_srcdir)/wviewd_vpro/Ccitt.h
 
 # define libraries
-htmlgend_LDADD   =
+wviewd_vpro_LDADD       =
 
 # define library directories
-htmlgend_LDFLAGS = -L$(prefix)/lib -L/usr/lib
+wviewd_vpro_LDFLAGS     = -L$(prefix)/lib -L/usr/lib
 
 if CROSSCOMPILE
-htmlgend_LDFLAGS += $(prefix)/lib/crt1.o $(prefix)/lib/crti.o $(prefix)/lib/crtn.o
+wviewd_vpro_LDFLAGS += $(prefix)/lib/crt1.o $(prefix)/lib/crti.o $(prefix)/lib/crtn.o
 endif
 

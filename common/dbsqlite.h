@@ -1,26 +1,25 @@
 #ifndef INC_dbsqliteh
 #define INC_dbsqliteh
 /*---------------------------------------------------------------------------
- 
+
   FILENAME:
-        dbsqlite.h
- 
+		dbsqlite.h
+
   PURPOSE:
-        Provide the wview daemon archive database definitions.
- 
+		Provide the wview daemon archive database definitions.
+
   REVISION HISTORY:
-        Date            Engineer        Revision        Remarks
-        08/31/2008      M.S. Teel       0               Original
- 
+		Date            Engineer        Revision        Remarks
+		08/31/2008      M.S. Teel       0               Original
+
   NOTES:
- 
- 
+
   LICENSE:
-        Copyright (c) 2008, Mark S. Teel (mark@teel.ws)
- 
-        This source code is released for free distribution under the terms
-        of the GNU General Public License.
- 
+		Copyright (c) 2008, Mark S. Teel (mark@teel.ws)
+
+		This source code is released for free distribution under the terms
+		of the GNU General Public License.
+
 ----------------------------------------------------------------------------*/
 
 /*  ... System include files
@@ -46,9 +45,7 @@
 #include <datadefs.h>
 #include <windAverage.h>
 
-
 #define FIELD_IS_NULL(x)        (((x->type & SQLITE_FIELD_VALUE_IS_NULL) == 0) ? FALSE : TRUE)
-
 
 /*  ... API definitions
 */
@@ -56,11 +53,8 @@
 /*  !!!!!!!!!!!!!!!!!!  HIDDEN, NOT FOR API USE  !!!!!!!!!!!!!!!!!!
 */
 
-
-
 /*  !!!!!!!!!!!!!!!!!!!!  END HIDDEN SECTION  !!!!!!!!!!!!!!!!!!!!!
 */
-
 
 /*  ... API methods
 */
@@ -68,40 +62,38 @@
 // ---------------------- History Computation ---------------------
 
 /*  ... calculate averages over a given period of time
-    ... (given in arcInterval samples);
-    ... this will zero out the HISTORY_DATA store before beginning
-    ... the processing;
-    ... returns number of minutes found or ERROR
+	... (given in arcInterval samples);
+	... this will zero out the HISTORY_DATA store before beginning
+	... the processing;
+	... returns number of minutes found or ERROR
 */
 extern int dbsqliteArchiveGetAverages
 (
-    int             isMetricUnits,
-    int             arcInterval,
-    HISTORY_DATA    *store,
-    time_t          startTime,
-    int             numSamples
+	int             isMetricUnits,
+	int             arcInterval,
+	HISTORY_DATA*    store,
+	time_t          startTime,
+	int             numSamples
 );
-
 
 // --------------------- ARCHIVE Day History ----------------------
 
 extern int dbsqliteWriteDailyArchiveReport
 (
-    char            *filename,
-    time_t          timeval,
-    int             isMetric,
-    int             arcInterval,
-    void            (*writeHeader) (FILE *file)
+	char*            filename,
+	time_t          timeval,
+	int             isMetric,
+	int             arcInterval,
+	void(*writeHeader)(FILE* file)
 );
 
 extern int dbsqliteUpdateDailyArchiveReport
 (
-    char            *file,
-    ARCHIVE_PKT     *data,
-    void            (*writeHeader) (FILE *file),
-    int             isMetric
+	char*            file,
+	ARCHIVE_PKT*     data,
+	void(*writeHeader)(FILE* file),
+	int             isMetric
 );
-
 
 // ----------------------- Archive Database -----------------------
 
@@ -119,35 +111,35 @@ extern void dbsqliteArchiveExit(void);
 extern int dbsqliteArchivePragmaSet(char* pragma, char* setting);
 
 //  ... Reset the default archive database location (used by conversion utils);
-extern void dbsqliteArchiveSetPath (char* newPath);
-extern char* dbsqliteArchiveGetPath (void);
+extern void dbsqliteArchiveSetPath(char* newPath);
+extern char* dbsqliteArchiveGetPath(void);
 
 //  ... append an archive record to the archive database;
 //  ... returns OK or ERROR
-extern int dbsqliteArchiveStoreRecord (ARCHIVE_PKT* record);
+extern int dbsqliteArchiveStoreRecord(ARCHIVE_PKT* record);
 
 //  ... search the archive database for the most recent archive record date;
 //  ... returns time or ERROR if no archives found
-extern time_t dbsqliteArchiveGetNewestTime (ARCHIVE_PKT* newestRecord);
+extern time_t dbsqliteArchiveGetNewestTime(ARCHIVE_PKT* newestRecord);
 
 //  ... search the archive database for the next archive record after 'dateTime';
 //  ... returns new time or ERROR if no archive found
-extern time_t dbsqliteArchiveGetNextRecord (time_t  dateTime, ARCHIVE_PKT* recordStore);
+extern time_t dbsqliteArchiveGetNextRecord(time_t  dateTime, ARCHIVE_PKT* recordStore);
 
 //  ... search the archive database for the archive record with timestamp 'dateTime';
 //  ... returns OK or ERROR if no archive record found
 
-extern int dbsqliteArchiveGetRecord (time_t dateTime, ARCHIVE_PKT* recordStore);
+extern int dbsqliteArchiveGetRecord(time_t dateTime, ARCHIVE_PKT* recordStore);
 
-//  ... search the archive database for the first archive record in the given 
+//  ... search the archive database for the first archive record in the given
 //  ... timestamp range;
 //  ... returns OK or ERROR if no archive record found
 
 extern int dbsqliteArchiveGetFirstRecord
 (
-    time_t          startTime, 
-    time_t          stopTime, 
-    ARCHIVE_PKT*    recordStore
+	time_t          startTime,
+	time_t          stopTime,
+	ARCHIVE_PKT*    recordStore
 );
 
 //  ... execute the given function for each record in the given timestamp range;
@@ -157,19 +149,17 @@ extern int dbsqliteArchiveGetFirstRecord
 
 extern int dbsqliteArchiveExecutePerRecord
 (
-    void            (*function)(ARCHIVE_PKT* rec, void* data),
-    void*           userData,
-    time_t          startTime, 
-    time_t          stopTime,
-    char*           selectClause
+	void(*function)(ARCHIVE_PKT* rec, void* data),
+	void*           userData,
+	time_t          startTime,
+	time_t          stopTime,
+	char*           selectClause
 );
 
 //  ... Retrieve the number of records matching the given "where" clause;
 //  ... Returns the count or ERROR
 
 extern int dbsqliteArchiveGetCount(char* whereClause);
-
-
 
 // ------------------------ HILOW Database ------------------------
 // Initialize the HILOW database:
@@ -184,33 +174,32 @@ extern void dbsqliteHiLowExit(void);
 // Returns: OK or ERROR
 extern int dbsqliteHiLowPragmaSet(char* pragma, char* setting);
 
-
 //  ... Update sensors for the given hour and time frame:
 //  ... Returns number of records processed or ERROR
 extern int dbsqliteHiLowGetHour
 (
-    time_t                  hour,
-    SENSOR_STORE*           sensors,
-    SENSOR_TIMEFRAMES       timeFrame
+	time_t                  hour,
+	SENSOR_STORE*           sensors,
+	SENSOR_TIMEFRAMES       timeFrame
 );
 
 //  ... Update sensors for the given day and time frame:
 //  ... Returns number of records processed or ERROR
 extern int dbsqliteHiLowGetDay
 (
-    time_t                  day,
-    SENSOR_STORE*           sensors,
-    SENSOR_TIMEFRAMES       timeFrame
+	time_t                  day,
+	SENSOR_STORE*           sensors,
+	SENSOR_TIMEFRAMES       timeFrame
 );
 
 //  ... Update sensors for the given month and time frame:
 //  ... Returns number of records processed or ERROR
 extern int dbsqliteHiLowGetMonth
 (
-    time_t                  month,
-    SENSOR_STORE*           sensors,
-    SENSOR_TIMEFRAMES       timeFrame,
-    int                     yearRainFlag
+	time_t                  month,
+	SENSOR_STORE*           sensors,
+	SENSOR_TIMEFRAMES       timeFrame,
+	int                     yearRainFlag
 );
 
 //  ... Update database with a timestamped LOOP sample:
@@ -218,8 +207,8 @@ extern int dbsqliteHiLowGetMonth
 //  ... Returns OK or ERROR
 extern int dbsqliteHiLowStoreSample
 (
-    time_t                  timestamp,
-    LOOP_PKT*               sample
+	time_t                  timestamp,
+	LOOP_PKT*               sample
 );
 
 //  ... Update database with an archive record in lieu of LOOP samples:
@@ -227,25 +216,25 @@ extern int dbsqliteHiLowStoreSample
 //  ... Returns OK or ERROR
 extern int dbsqliteHiLowStoreArchive
 (
-    ARCHIVE_PKT*            record
+	ARCHIVE_PKT*            record
 );
 
 //  ... Update database with an archive record, ignoring cumulative values:
 //  ... No duplicate checking is done;
 //  ... Returns OK or ERROR
-extern int dbsqliteHiLowUpdateArchive (ARCHIVE_PKT* record);
+extern int dbsqliteHiLowUpdateArchive(ARCHIVE_PKT* record);
 
 //  ... Retrieve the last HILOW hour in the database;
 //  ... Returns time or ERROR
 extern time_t dbsqliteHiLowGetLastUpdate(void);
 
-
-
 #ifdef BUILD_HTMLGEND
 // ----------------------- History Database -----------------------
 
 // Initialize the day history table:
-extern void dbsqliteHistoryInit (void);
+extern void dbsqliteHistoryInit(void);
+
+extern int dbsqliteHistoryPragmaSet(char* pragma, char* setting);
 
 // Insert a day record in the history table:
 // Returns OK or ERROR
@@ -255,26 +244,26 @@ extern int dbsqliteHistoryInsertDay(HISTORY_DATA* data);
 // Returns OK or ERROR if not found
 extern int dbsqliteHistoryGetDay(time_t date, HISTORY_DATA* store);
 
-
 // ------------------------- NOAA Database ------------------------
 
 extern int dbsqliteNOAAInit(void);
 extern void dbsqliteNOAAExit(void);
+extern int dbsqliteNOAAPragmaSet(char* pragma, char* setting);
 
 /*  ... dbsqliteNOAAGetDay: summarize day records for NOAA reports;
-    ... this will zero out the NOAA_DAY_REC store before beginning;
-    ... returns OK or ERROR if day not found in archives
+	... this will zero out the NOAA_DAY_REC store before beginning;
+	... returns OK or ERROR if day not found in archives
 */
-extern int dbsqliteNOAAGetDay(NOAA_DAY_REC *store, time_t day);
+extern int dbsqliteNOAAGetDay(NOAA_DAY_REC* store, time_t day);
 
 /*  ... dbsqliteNOAAComputeNorms: compute monthly and yearly norms
 */
 extern int dbsqliteNOAAComputeNorms
 (
-    float   *temps, 
-    float   *rains, 
-    float   *yearTemp, 
-    float   *yearRain
+	float*   temps,
+	float*   rains,
+	float*   yearTemp,
+	float*   yearRain
 );
 
 /*  ... dbsqliteNOAAUpdate: bring the NOAA database up-to date:
@@ -284,4 +273,3 @@ extern void dbsqliteNOAAUpdate(void);
 #endif
 
 #endif
-

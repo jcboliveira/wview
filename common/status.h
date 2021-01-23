@@ -1,26 +1,25 @@
 #ifndef INC_statush
 #define INC_statush
 /*---------------------------------------------------------------------------
- 
+
   FILENAME:
-        status.h
- 
+		status.h
+
   PURPOSE:
-        Define the status reporting API.
- 
+		Define the status reporting API.
+
   REVISION HISTORY:
-        Date            Engineer        Revision        Remarks
-        12/27/2009      M.S. Teel       0               Original
- 
+		Date            Engineer        Revision        Remarks
+		12/27/2009      M.S. Teel       0               Original
+
   NOTES:
-        
- 
+
   LICENSE:
-        Copyright (c) 2009, Mark S. Teel (mark@teel.ws)
-  
-        This source code is released for free distribution under the terms 
-        of the GNU General Public License.
-  
+		Copyright (c) 2009, Mark S. Teel (mark@teel.ws)
+
+		This source code is released for free distribution under the terms
+		of the GNU General Public License.
+
 ----------------------------------------------------------------------------*/
 
 //  ... includes
@@ -38,30 +37,28 @@
 #include <sysdefs.h>
 #include <services.h>
 
-
 //  ... definitions
 
 #define STATUS_STATS_MAX        4
 
 typedef enum
 {
-    STATUS_NOT_STARTED          = 0,
-    STATUS_BOOTING              = 1,
-    STATUS_WAITING_FOR_WVIEW,
-    STATUS_RUNNING,
-    STATUS_SHUTDOWN,
-    STATUS_ERROR
+	STATUS_NOT_STARTED = 0,
+	STATUS_BOOTING = 1,
+	STATUS_WAITING_FOR_WVIEW,
+	STATUS_RUNNING,
+	STATUS_SHUTDOWN,
+	STATUS_ERROR
 } STATUS_TYPE;
-    
+
 typedef struct
 {
-    char            filePath[_MAX_PATH];
-    STATUS_TYPE     status;
-    char            lastMessage[_MAX_PATH];
-    int             stat[STATUS_STATS_MAX];
-    char            statLabel[STATUS_STATS_MAX][64];
+	char            filePath[_MAX_PATH];
+	STATUS_TYPE     status;
+	char            lastMessage[_MAX_PATH];
+	int             stat[STATUS_STATS_MAX];
+	char            statLabel[STATUS_STATS_MAX][64];
 } STATUS_INFO;
-
 
 //  ... API prototypes
 
@@ -83,5 +80,3 @@ extern int statusIncrementStat(int index);
 extern int statusDecrementStat(int index);
 
 #endif
-
-
