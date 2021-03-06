@@ -483,6 +483,8 @@ static int newProcessEntryPoint(void* pargs)
 	return (system(binFile));
 }
 
+int htmlgenOutputFiles(HTML_MGR_ID , uint64_t );
+
 int htmlmgrGenerate
 (
 	HTML_MGR_ID         id

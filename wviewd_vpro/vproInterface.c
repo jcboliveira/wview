@@ -48,7 +48,7 @@ static VP_IF_DATA vpWorkData;
 static WV_ACCUM_ID vp12HourTempAvg;
 
 static void portConfig(int fd);
-static void(*ArchiveIndicator)(ARCHIVE_PKT *newRecord);
+static void (*ArchiveIndicator)(ARCHIVE_PKT *newRecord);
 
 ////////////****////****  S T A T I O N   A P I  ****////****////////////
 /////  Must be provided by each supported wview station interface  //////
@@ -82,7 +82,7 @@ static void(*ArchiveIndicator)(ARCHIVE_PKT *newRecord);
 //
 int stationInit(
 	WVIEWD_WORK *work,
-	void(*archiveIndication)(ARCHIVE_PKT *newRecord))
+	void (*archiveIndication)(ARCHIVE_PKT *newRecord))
 {
 	STIM stim;
 	ARCHIVE_PKT newestRecord;
@@ -126,18 +126,18 @@ int stationInit(
 	if (!strcmp(work->stationInterface, "serial"))
 	{
 		MsgLog(PRI_STATUS, "Vantage Pro on %s opened ...",
-			work->stationDevice);
+			   work->stationDevice);
 	}
 	else if (!strcmp(work->stationInterface, "ethernet"))
 	{
 		MsgLog(PRI_STATUS, "Vantage Pro on %s:%d opened ...",
-			work->stationHost, work->stationPort);
+			   work->stationHost, work->stationPort);
 	}
 
 	// get VP-specific configuration
 	if (stationGetConfigValueBoolean(work,
-		configItem_STATION_DO_RXCHECK,
-		&vpWorkData.doRXCheck) == ERROR)
+									 configItem_STATION_DO_RXCHECK,
+									 &vpWorkData.doRXCheck) == ERROR)
 	{
 		// just default to disabled
 		MsgLog(PRI_MEDIUM, "stationInit: can't retrieve rxcheck configuration - defaulting to OFF");
@@ -146,7 +146,7 @@ int stationInit(
 	else
 	{
 		MsgLog(PRI_MEDIUM, "stationInit: VP rxcheck is %s",
-			((vpWorkData.doRXCheck) ? "ENABLED" : "DISABLED"));
+			   ((vpWorkData.doRXCheck) ? "ENABLED" : "DISABLED"));
 	}
 
 	// This must be done here so dmpafter will work:
@@ -167,8 +167,8 @@ int stationInit(
 	}
 
 	if (radStatesAddHandler(vpWorkData.stateMachine,
-		VPRO_STATE_STARTPROC,
-		vproStartProcState) == ERROR)
+							VPRO_STATE_STARTPROC,
+							vproStartProcState) == ERROR)
 	{
 		MsgLog(PRI_HIGH, "stationInit: radStatesAddHandler failed");
 		radStatesExit(vpWorkData.stateMachine);
@@ -176,8 +176,8 @@ int stationInit(
 		return ERROR;
 	}
 	if (radStatesAddHandler(vpWorkData.stateMachine,
-		VPRO_STATE_RUN,
-		vproRunState) == ERROR)
+							VPRO_STATE_RUN,
+							vproRunState) == ERROR)
 	{
 		MsgLog(PRI_HIGH, "stationInit: radStatesAddHandler failed");
 		radStatesExit(vpWorkData.stateMachine);
@@ -185,8 +185,8 @@ int stationInit(
 		return ERROR;
 	}
 	if (radStatesAddHandler(vpWorkData.stateMachine,
-		VPRO_STATE_DMPAFT_RQST,
-		vproDumpAfterState) == ERROR)
+							VPRO_STATE_DMPAFT_RQST,
+							vproDumpAfterState) == ERROR)
 	{
 		MsgLog(PRI_HIGH, "stationInit: radStatesAddHandler failed");
 		radStatesExit(vpWorkData.stateMachine);
@@ -194,8 +194,8 @@ int stationInit(
 		return ERROR;
 	}
 	if (radStatesAddHandler(vpWorkData.stateMachine,
-		VPRO_STATE_DMPAFT_ACK,
-		vproDumpAfterAckState) == ERROR)
+							VPRO_STATE_DMPAFT_ACK,
+							vproDumpAfterAckState) == ERROR)
 	{
 		MsgLog(PRI_HIGH, "stationInit: radStatesAddHandler failed");
 		radStatesExit(vpWorkData.stateMachine);
@@ -203,8 +203,8 @@ int stationInit(
 		return ERROR;
 	}
 	if (radStatesAddHandler(vpWorkData.stateMachine,
-		VPRO_STATE_RECV_ARCH,
-		vproReceiveArchiveState) == ERROR)
+							VPRO_STATE_RECV_ARCH,
+							vproReceiveArchiveState) == ERROR)
 	{
 		MsgLog(PRI_HIGH, "stationInit: radStatesAddHandler failed");
 		radStatesExit(vpWorkData.stateMachine);
@@ -212,8 +212,8 @@ int stationInit(
 		return ERROR;
 	}
 	if (radStatesAddHandler(vpWorkData.stateMachine,
-		VPRO_STATE_LOOP_RQST,
-		vproLoopState) == ERROR)
+							VPRO_STATE_LOOP_RQST,
+							vproLoopState) == ERROR)
 	{
 		MsgLog(PRI_HIGH, "stationInit: radStatesAddHandler failed");
 		radStatesExit(vpWorkData.stateMachine);
@@ -221,8 +221,8 @@ int stationInit(
 		return ERROR;
 	}
 	if (radStatesAddHandler(vpWorkData.stateMachine,
-		VPRO_STATE_READ_RECOVER,
-		vproReadRecoverState) == ERROR)
+							VPRO_STATE_READ_RECOVER,
+							vproReadRecoverState) == ERROR)
 	{
 		MsgLog(PRI_HIGH, "stationInit: radStatesAddHandler failed");
 		radStatesExit(vpWorkData.stateMachine);
@@ -230,8 +230,8 @@ int stationInit(
 		return ERROR;
 	}
 	if (radStatesAddHandler(vpWorkData.stateMachine,
-		VPRO_STATE_ERROR,
-		vproErrorState) == ERROR)
+							VPRO_STATE_ERROR,
+							vproErrorState) == ERROR)
 	{
 		MsgLog(PRI_HIGH, "stationInit: radStatesAddHandler failed");
 		radStatesExit(vpWorkData.stateMachine);
@@ -248,8 +248,8 @@ int stationInit(
 	while ((nowTime = dbsqliteArchiveGetNextRecord(nowTime, &recordStore)) != ERROR)
 	{
 		sensorAccumAddSample(vp12HourTempAvg,
-			recordStore.dateTime,
-			recordStore.value[DATA_INDEX_outTemp]);
+							 recordStore.dateTime,
+							 recordStore.value[DATA_INDEX_outTemp]);
 	}
 
 	MsgLog(PRI_STATUS, "Starting station interface: VantagePro");
@@ -305,13 +305,13 @@ int stationGetPosition(WVIEWD_WORK *work)
 		vpWorkData.elevation = work->elevation;
 
 		MsgLog(PRI_STATUS, "station location: elevation: %d feet",
-			work->elevation);
+			   work->elevation);
 
 		MsgLog(PRI_STATUS, "station location: latitude: %3.1f %c  longitude: %3.1f %c",
-			(float)abs(work->latitude) / 10.0,
-			((work->latitude < 0) ? 'S' : 'N'),
-			(float)abs(work->longitude) / 10.0,
-			((work->longitude < 0) ? 'W' : 'E'));
+			   (float)abs(work->latitude) / 10.0,
+			   ((work->latitude < 0) ? 'S' : 'N'),
+			   (float)abs(work->longitude) / 10.0,
+			   ((work->longitude < 0) ? 'W' : 'E'));
 
 		return OK;
 	}
@@ -445,11 +445,11 @@ static void portConfig(int fd)
 	// Serial control options:
 	port.c_cflag &= ~PARENB; // No parity
 	port.c_cflag &= ~CSTOPB; // One stop bit
-	port.c_cflag &= ~CSIZE;  // Character size mask
-	port.c_cflag |= CS8;     // Character size 8 bits
-	port.c_cflag |= CREAD;   // Enable Receiver
-	port.c_cflag &= ~HUPCL;  // No "hangup"
-	port.c_cflag |= CLOCAL;  // Ignore modem control lines
+	port.c_cflag &= ~CSIZE;	 // Character size mask
+	port.c_cflag |= CS8;	 // Character size 8 bits
+	port.c_cflag |= CREAD;	 // Enable Receiver
+	port.c_cflag &= ~HUPCL;	 // No "hangup"
+	port.c_cflag |= CLOCAL;	 // Ignore modem control lines
 
 	cfsetispeed(&port, B19200);
 	cfsetospeed(&port, B19200);
@@ -571,10 +571,10 @@ static void convertToArchivePkt(WVIEWD_WORK *work, ARCHIVE_RECORD *newRecord, AR
 	{
 		archivePkt->value[DATA_INDEX_barometer] = (float)newRecord->barometer / 1000.0;
 		archivePkt->value[DATA_INDEX_pressure] = vpConvertSLPToSP((float)archivePkt->value[DATA_INDEX_barometer],
-			sensorAccumGetAverage(vp12HourTempAvg),
-			(float)vpWorkData.elevation);
+																  sensorAccumGetAverage(vp12HourTempAvg),
+																  (float)vpWorkData.elevation);
 		archivePkt->value[DATA_INDEX_altimeter] = wvutilsConvertSPToAltimeter((float)archivePkt->value[DATA_INDEX_pressure],
-			(float)vpWorkData.elevation);
+																			  (float)vpWorkData.elevation);
 	}
 	if (newRecord->inTemp < 2000)
 		archivePkt->value[DATA_INDEX_inTemp] = (float)newRecord->inTemp / 10.0;
@@ -596,15 +596,15 @@ static void convertToArchivePkt(WVIEWD_WORK *work, ARCHIVE_RECORD *newRecord, AR
 		archivePkt->value[DATA_INDEX_outHumidity] != ARCHIVE_VALUE_NULL)
 	{
 		archivePkt->value[DATA_INDEX_dewpoint] = wvutilsCalculateDewpoint((float)archivePkt->value[DATA_INDEX_outTemp],
-			(float)archivePkt->value[DATA_INDEX_outHumidity]);
+																		  (float)archivePkt->value[DATA_INDEX_outHumidity]);
 		archivePkt->value[DATA_INDEX_heatindex] = wvutilsCalculateHeatIndex((float)archivePkt->value[DATA_INDEX_outTemp],
-			(float)archivePkt->value[DATA_INDEX_outHumidity]);
+																			(float)archivePkt->value[DATA_INDEX_outHumidity]);
 	}
 	if (archivePkt->value[DATA_INDEX_outTemp] != ARCHIVE_VALUE_NULL &&
 		archivePkt->value[DATA_INDEX_windSpeed] != ARCHIVE_VALUE_NULL)
 	{
 		archivePkt->value[DATA_INDEX_windchill] = wvutilsCalculateWindChill((float)archivePkt->value[DATA_INDEX_outTemp],
-			(float)archivePkt->value[DATA_INDEX_windSpeed]);
+																			(float)archivePkt->value[DATA_INDEX_windSpeed]);
 	}
 
 	if (archivePkt->value[DATA_INDEX_outHumidity] != ARCHIVE_VALUE_NULL && archivePkt->value[DATA_INDEX_outTemp] != ARCHIVE_VALUE_NULL && archivePkt->value[DATA_INDEX_windSpeed] != ARCHIVE_VALUE_NULL)
@@ -701,7 +701,8 @@ static void convertToArchivePkt(WVIEWD_WORK *work, ARCHIVE_RECORD *newRecord, AR
 	return;
 }
 
-static void storeLoopPkt(WVIEWD_WORK *work, LOOP_DATA *src, LOOP2_DATA *src2)
+// store LOOP
+static void storeLoopPkt(WVIEWD_WORK *work, LOOP_DATA *src, LOOP2_DATA *src2, int retVal1, int retVal2)
 {
 	LOOP_PKT *dest = &(work->loopPkt);
 	uint16_t tempshort;
@@ -783,15 +784,15 @@ static void storeLoopPkt(WVIEWD_WORK *work, LOOP_DATA *src, LOOP2_DATA *src2)
 
 		// calculate station pressure:
 		dest->stationPressure = vpConvertSLPToSP(dest->barometer,
-			sensorAccumGetAverage(vp12HourTempAvg),
-			(float)vpWorkData.elevation);
+												 sensorAccumGetAverage(vp12HourTempAvg),
+												 (float)vpWorkData.elevation);
 	}
 
 	src->inTemp = SHORT_SWAP(src->inTemp);
 	if (src->inTemp != 0x7FFF)
 		dest->inTemp = (float)src->inTemp / 10.0;
 
-	if (src->inHumidity <101)
+	if (src->inHumidity < 101)
 		dest->inHumidity = src->inHumidity;
 
 	if (src->outHumidity < 101)
@@ -802,14 +803,18 @@ static void storeLoopPkt(WVIEWD_WORK *work, LOOP_DATA *src, LOOP2_DATA *src2)
 		dest->windSpeedF = (float)src->windSpeed;
 	}
 	float tempWind = 0;
-	if (src2->windSpeed < 200)
+	if (retVal2 != -1)
 	{
-		tempWind = (float)src2->windSpeed;
-	}
-	if (tempWind > dest->windSpeedF) {
-		dest->windSpeedF = tempWind;
-	}
+		if (src2->windSpeed < 200)
+		{
+			tempWind = (float)src2->windSpeed;
+		}
 
+		if (tempWind > dest->windSpeedF)
+		{
+			dest->windSpeedF = tempWind;
+		}
+	}
 	tempshort = SHORT_SWAP(src->windDir);
 	if (tempshort != 0xFFFF && tempshort != 0x7FFF)
 	{
@@ -844,42 +849,45 @@ static void storeLoopPkt(WVIEWD_WORK *work, LOOP_DATA *src, LOOP2_DATA *src2)
 	{
 		dest->extraTemp[1] = wvutilsCalculateApparentTemp((float)src->outTemp / 10.0, (float)src->tenMinuteAvgWindSpeed / 10, src->outHumidity);
 	}
-
-	if (src2->THSWIndex != 0xFF)
+	
+	if (retVal2 != -1)
 	{
-		dest->extraTemp[0] = (float)(src2->THSWIndex);
-	}
+		if (src2->THSWIndex != 0xFF)
+		{
+			dest->extraTemp[0] = (float)(src2->THSWIndex);
+		}
 
-	if (src2->WindChill != 0xFF)
-	{
-		dest->windchill = (float)(src2->WindChill);
-	}
+		if (src2->WindChill != 0xFF)
+		{
+			dest->windchill = (float)(src2->WindChill);
+		}
 
-	if (src2->HeatIndex != 0xFF)
-	{
-		dest->heatindex = (float)(src2->HeatIndex);
-	}
+		if (src2->HeatIndex != 0xFF)
+		{
+			dest->heatindex = (float)(src2->HeatIndex);
+		}
 
-	if (src2->DewPoint != 0xFF)
-	{
-		dest->dewpoint = (float)(src2->DewPoint);
-	}
+		if (src2->DewPoint != 0xFF)
+		{
+			dest->dewpoint = (float)(src2->DewPoint);
+		}
 
-	if (src2->twoMinuteAvgWindSpeed <2000)
-	{
-		dest->twoMinuteAvgWindSpeed = (float)src2->twoMinuteAvgWindSpeed / 10.0;
-	}
+		if (src2->twoMinuteAvgWindSpeed < 2000)
+		{
+			dest->twoMinuteAvgWindSpeed = (float)src2->twoMinuteAvgWindSpeed / 10.0;
+		}
 
-	if (src2->tenMinuteWindGust <200)
-	{
-		dest->tenMinuteWindGust = (float)src2->tenMinuteWindGust;
-	}
+		if (src2->tenMinuteWindGust < 200)
+		{
+			dest->tenMinuteWindGust = (float)src2->tenMinuteWindGust;
+		}
 
-	if (src2->tenMinuteAvgWindSpeed <200) {
-		dest->tenMinuteAvgWindSpeed = (float)src->tenMinuteAvgWindSpeed;
-		dest->WinddirtenMinuteWindGust = src2->WinddirtenMinuteWindGust;
+		if (src2->tenMinuteAvgWindSpeed < 200)
+		{
+			dest->tenMinuteAvgWindSpeed = (float)src->tenMinuteAvgWindSpeed;
+			dest->WinddirtenMinuteWindGust = src2->WinddirtenMinuteWindGust;
+		}
 	}
-
 	return;
 }
 
@@ -900,10 +908,10 @@ static int processArchivePage(WVIEWD_WORK *work, ARCHIVE_PAGE *page)
 		swapArchiveRecord(&page->record[i]);
 
 		date = INSERT_PACKED_DATE(wvutilsGetYear(work->archiveDateTime),
-			wvutilsGetMonth(work->archiveDateTime),
-			wvutilsGetDay(work->archiveDateTime));
+								  wvutilsGetMonth(work->archiveDateTime),
+								  wvutilsGetDay(work->archiveDateTime));
 		ntime = (100 * wvutilsGetHour(work->archiveDateTime)) +
-			wvutilsGetMin(work->archiveDateTime);
+				wvutilsGetMin(work->archiveDateTime);
 
 		if ((page->record[i].date < date) ||
 			(page->record[i].date == date && page->record[i].time <= ntime) ||
@@ -1193,22 +1201,22 @@ int vpifSynchronizeConsoleClock(WVIEWD_WORK *work)
 	localtime_r(&ntime, &locTime);
 
 	if (vpifSetTime(work,
-		locTime.tm_year + 1900,
-		locTime.tm_mon + 1,
-		locTime.tm_mday,
-		locTime.tm_hour,
-		locTime.tm_min,
-		locTime.tm_sec) == ERROR)
+					locTime.tm_year + 1900,
+					locTime.tm_mon + 1,
+					locTime.tm_mday,
+					locTime.tm_hour,
+					locTime.tm_min,
+					locTime.tm_sec) == ERROR)
 	{
 		MsgLog(PRI_HIGH, "vpifSynchronizeConsoleClock: SETTIME failed");
 		return ERROR;
 	}
 
 	MsgLog(PRI_STATUS, "station time synchronized to: %2.2d-%2.2d-%4.4d %2.2d:%2.2d:%2.2d",
-		locTime.tm_mon + 1, locTime.tm_mday, locTime.tm_year + 1900,
-		locTime.tm_hour, locTime.tm_min, locTime.tm_sec);
+		   locTime.tm_mon + 1, locTime.tm_mday, locTime.tm_year + 1900,
+		   locTime.tm_hour, locTime.tm_min, locTime.tm_sec);
 	MsgLog(PRI_STATUS, "station GMT offset synchronized to: %d hours, %d minutes",
-		gmtOffset / 60, gmtOffset % 60);
+		   gmtOffset / 60, gmtOffset % 60);
 
 	// the VP console is cranky after a time reset
 	radUtilsSleep(1500);
@@ -1551,21 +1559,21 @@ void processRealTimeData(LOOP_PKT loopData, WV_SENSOR sensor[STF_MAX][SENSOR_MAX
 
 int vpifReadMessage(WVIEWD_WORK *work, int expectACK)
 {
-	uint16_t temp[VP_BYTE_LENGTH_MAX / 2];  // short align
+	uint16_t temp[VP_BYTE_LENGTH_MAX / 2];	// short align
 	uint16_t temp2[VP_BYTE_LENGTH_MAX / 2]; // short align
 	uint8_t *chPtr = (uint8_t *)temp;
 	ARCHIVE_PAGE *arcRec = (ARCHIVE_PAGE *)temp;
 	DMPAFT_HDR *dmphdr = (DMPAFT_HDR *)temp;
 	LOOP_DATA *loop = (LOOP_DATA *)temp;
 	LOOP2_DATA *loop2 = (LOOP2_DATA *)temp2;
-	int retVal;
+	int retVal1, retVal2;
 
 	memset(temp, 0, sizeof(temp));
 	switch (vpWorkData.reqMsgType)
 	{
 	case SER_MSG_ACK:
-		retVal = (*work->medium.read)(&work->medium, chPtr, 1, 1000);
-		if (retVal != 1)
+		retVal1 = (*work->medium.read)(&work->medium, chPtr, 1, 1000);
+		if (retVal1 != 1)
 		{
 			return ERROR;
 		}
@@ -1592,8 +1600,8 @@ int vpifReadMessage(WVIEWD_WORK *work, int expectACK)
 				return ERROR;
 			}
 		}
-		retVal = readWithCRC(work, dmphdr, sizeof(DMPAFT_HDR), 3000);
-		if (retVal != sizeof(DMPAFT_HDR))
+		retVal1 = readWithCRC(work, dmphdr, sizeof(DMPAFT_HDR), 3000);
+		if (retVal1 != sizeof(DMPAFT_HDR))
 		{
 			(*work->medium.flush)(&work->medium, WV_QUEUE_INPUT);
 			return ERROR;
@@ -1604,8 +1612,8 @@ int vpifReadMessage(WVIEWD_WORK *work, int expectACK)
 		return OK;
 
 	case SER_MSG_ARCHIVE:
-		retVal = readWithCRC(work, arcRec, sizeof(ARCHIVE_PAGE), 5000);
-		if (retVal != sizeof(ARCHIVE_PAGE))
+		retVal1 = readWithCRC(work, arcRec, sizeof(ARCHIVE_PAGE), 5000);
+		if (retVal1 != sizeof(ARCHIVE_PAGE))
 		{
 			(*work->medium.flush)(&work->medium, WV_QUEUE_INPUT);
 			return ERROR;
@@ -1632,28 +1640,26 @@ int vpifReadMessage(WVIEWD_WORK *work, int expectACK)
 				return ERROR;
 			}
 		}
-		retVal = readWithCRC(work, loop, sizeof(LOOP_DATA), 5000);
-		if (retVal != sizeof(LOOP_DATA))
+		retVal1 = readWithCRC(work, loop, sizeof(LOOP_DATA), 5000);
+		if (retVal1 != sizeof(LOOP_DATA))
 		{
-			MsgLog(PRI_HIGH, "Loop1 error  retval=%d", retVal);
+			MsgLog(PRI_HIGH, "Loop1 error  retval=%d", retVal1);
 
 			(*work->medium.flush)(&work->medium, WV_QUEUE_INPUT);
 			return ERROR;
 		}
-		
-		retVal = readWithCRC(work, loop2, sizeof(LOOP2_DATA), 5000);
-		if (retVal != sizeof(LOOP2_DATA))
+
+		retVal2 = readWithCRC(work, loop2, sizeof(LOOP2_DATA), 5000);
+		if (retVal2 != sizeof(LOOP2_DATA))
 		{
-			MsgLog(PRI_HIGH, "Loop2 error retval=%d", retVal);
+			MsgLog(PRI_HIGH, "Loop2 error retval=%d", retVal2);
 
 			(*work->medium.flush)(&work->medium, WV_QUEUE_INPUT);
-			return ERROR;
 		}
-		
 
 		/*  ... store in IPM format
 		*/
-		storeLoopPkt(work, loop, loop2);
+		storeLoopPkt(work, loop, loop2, retVal1, retVal2);
 		processRealTimeData(work->loopPkt, work->sensors.sensor);
 		return OK;
 #endif
@@ -1773,10 +1779,10 @@ int vpifSendDumpDateTimeRqst(WVIEWD_WORK *work)
 	uint16_t date, ntime;
 
 	date = INSERT_PACKED_DATE(wvutilsGetYear(work->archiveDateTime),
-		wvutilsGetMonth(work->archiveDateTime),
-		wvutilsGetDay(work->archiveDateTime));
+							  wvutilsGetMonth(work->archiveDateTime),
+							  wvutilsGetDay(work->archiveDateTime));
 	ntime = (100 * wvutilsGetHour(work->archiveDateTime)) +
-		wvutilsGetMin(work->archiveDateTime);
+			wvutilsGetMin(work->archiveDateTime);
 
 	temp[0] = SHORT_SWAP(date);
 	temp[1] = SHORT_SWAP(ntime);
@@ -1975,9 +1981,9 @@ int vpconfigGetArchiveInterval(
 		return ERROR;
 	}
 	retVal = readWithCRC(work,
-		interval,
-		sizeof(ARCHIVE_INTERVAL),
-		2000);
+						 interval,
+						 sizeof(ARCHIVE_INTERVAL),
+						 2000);
 	if (retVal != sizeof(ARCHIVE_INTERVAL))
 	{
 		(*work->medium.flush)(&work->medium, WV_QUEUE_INPUT);
