@@ -49,7 +49,12 @@ static WV_ACCUM_ID vp12HourTempAvg;
 
 static void portConfig(int fd);
 static void (*ArchiveIndicator)(ARCHIVE_PKT *newRecord);
-
+int MsgLog
+(
+	int         priority,
+	char        *format,
+	...
+);
 ////////////****////****  S T A T I O N   A P I  ****////****////////////
 /////  Must be provided by each supported wview station interface  //////
 
@@ -1653,8 +1658,6 @@ int vpifReadMessage(WVIEWD_WORK *work, int expectACK)
 		if (retVal2 != sizeof(LOOP2_DATA))
 		{
 			MsgLog(PRI_HIGH, "Loop2 error retval=%d", retVal2);
-
-			(*work->medium.flush)(&work->medium, WV_QUEUE_INPUT);
 		}
 
 		/*  ... store in IPM format
